@@ -12,4 +12,4 @@ This project is under development. In the future, we will have more basic exampl
 
 - Bot commands.
 
-- Embed exemples.
+- Embed examples.
