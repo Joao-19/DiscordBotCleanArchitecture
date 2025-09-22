@@ -25,10 +25,6 @@ export default class CommandNotFoundError extends BaseError {
         this.message = finalForm.message;
     }
 
-    /**
-     * If an interaction (Message or ChatInputCommandInteraction) is present,
-     * replies to it with the error message.
-     */
     public async reply(): Promise<void> {
         if (!this.interaction) {
             return;

@@ -11,17 +11,9 @@ export enum ErrorTag {
 
 export default class BaseError extends Error {
 
-    /*
-     * @param {string} message - The error message.
-     * @param {Object} data - Additional data associated with the error.
-     */
     readonly tag: ErrorTag;
     readonly data?: object;
 
-   /*
-     * @param {string} message - The error message.
-     * @param {Object} data - Additional data associated with the error.
-     */
     constructor(form: {
         message?: string,
         data?: object,

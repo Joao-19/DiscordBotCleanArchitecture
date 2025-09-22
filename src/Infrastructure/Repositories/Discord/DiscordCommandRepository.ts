@@ -1,47 +1,23 @@
 import { REST, Routes } from "discord.js";
-// import IDiscordCommandRepository from "../../../Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
 import {DiscordCommand, Commands } from "../../../Domain/Discord/Entities/DiscordCommand.js";
 import IDiscordCommandRepository from "../../../Application/Interfaces/Repositories/IDiscordCommandRepository.js";
 import { ApplicationCommand } from 'discord.js'
 import { SnowflakeId } from "../../../Domain/Entities/ObjectValues/Id.js";
 
 
-/**
- * @typedef {object} DiscordAPICommand
- * @property {string} id
- * @property {string} name
- * @property {string} description
- * @property {number} type
- */
-
-/**
- * @implements {../../../Application/Interfaces/Repositories/IDiscordCommandRepository.ts}
- */
 class DiscordCommandRepository implements IDiscordCommandRepository {
 
     discordValidateCommandsNameRegex = new RegExp("^[\\-_'\\p{L}\\p{N}\\p{sc=Deva}\\p{sc=Thai}]{1,32}$", "u");
     rest: REST;
     clientId: string;
 
-
-    /**
-     * @param {object} params
-     * @param {string} params.clientId - The Discord bot client ID.
-     * @param {string} params.secretToken - The Discord bot secret token.
-     */
     constructor(form:{ clientId:string, rest: REST}) {
         const { clientId, rest } = form;
         this.rest = rest;
         this.clientId = clientId
     }
 
-    /**
-     * Retrieves uploaded Discord commands from the Discord API and filters them against registered commands.
-     * @returns {Promise<Commands>} A promise that resolves to a Commands object containing valid uploaded commands.
-     */
-
     async getUploadedCommands() {
-        /** @type {DiscordAPICommand[]} */
         const uploadedCommands: ApplicationCommand[] = await this.rest.get(Routes.applicationCommands(this.clientId)) as ApplicationCommand[];      
         console.log("Uploaded commands:", uploadedCommands.length);
 
@@ -57,11 +33,6 @@ class DiscordCommandRepository implements IDiscordCommandRepository {
         return new Commands({commands: serializedCommands});
     }
 
-    /**
-     * Updates Discord commands on the Discord API.
-     * @param {import("../../../Domain/Discord/Entities/DiscordCommand.ts").default[]} commands - An array of DiscordCommand instances to update.
-     * @returns {Promise<void>} A promise that resolves when the commands are updated.
-     */
     async updateCommands(commands: DiscordCommand[]) {
         const formattedCommands = commands.map(command => ({
             name: command.getName().toLowerCase(),
@@ -78,10 +49,6 @@ class DiscordCommandRepository implements IDiscordCommandRepository {
         await this.rest.put(Routes.applicationCommands(this.clientId), { body: formattedCommands });
     }
 
-    /**
-     * Retrieves a list of hard-coded Discord commands.
-     * @returns {Promise<Commands>} A promise that resolves to a Commands object containing hard-coded commands.
-     */
     async getCommands() {
         
         // MockComands, for testing, in the future can use a database or others.

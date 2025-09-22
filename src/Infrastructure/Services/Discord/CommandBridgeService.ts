@@ -7,43 +7,15 @@ import { ErrorTag } from "../../../Domain/Error/BaseError.js";
 import ICommandBridgeService, {CommandHandler, ExecuteCommandBridgeForm} from "../../../Domain/Services/Discord/ICommandBridgeService.js";
 import CommandNotFoundError from "../../../Domain/Error/Discord/Message/CommandNotFoundError.js";
 
-
 export default class CommandBridgeService implements ICommandBridgeService {
 
-    /**
-     * @type {import("discord").Client}
-     */
-    discordClient;
-    /**
-     */
-    discordCommandRepository;
-    /**
-     * @type {string}
-     */
-    shortcutIdentifier;
-    /**
-     * @typedef {object} CommandHandlerEntry
-     * @property {string} commandName - The name of the command.
-     * @property {object} useCase - The UseCase instance for the command.
-     * @property {function(object): Promise<void>} useCase.execute - The execute method of the UseCase.
-     */
 
-    /**
-     * @type {CommandHandlerEntry[]}
-     */
+    discordClient: Client;
+    discordCommandRepository: IDiscordCommandRepository;
+    shortcutIdentifier;
     discordBotHandlersCommands: CommandHandler[] = [];
-    /**
-    *@type { Commands }
-    */
     discordBotCommands = new Commands({ commands: [] });
 
-    /**
-     * @param {{discordClient: import("discord").Client, discordCommandRepository: import("../../../Application/Interfaces/Repositories/IDiscordCommandRepository").default, shortcutIdentifier: string}} options
-     * @param { object } options
-     * @param {import("discord").Client} options.discordClient - The Discord client to use for handling commands.
-     * @param {import("../../../Application/Interfaces/Repositories/IDiscordCommandRepository").default} options.discordCommandRepository - The repository to use for retrieving and updating commands.
-     * @param {string} options.shortcutIdentifier - The shortcut identifier for commands (e.g. prefix).
-     */
     constructor(form: {
         discordClient: Client,
         discordCommandRepository: IDiscordCommandRepository,
@@ -55,14 +27,6 @@ export default class CommandBridgeService implements ICommandBridgeService {
         this.shortcutIdentifier = shortcutIdentifier;
     }
 
-    /**
-     * Executes the command based on the provided command name and form.
-     * @param {object} params - The parameters for the command execution.
-     * @param {string} params.commandName - The name of the command to be executed.
-     * @param {object} params.form - The form data to be passed to the command handler.
-     * @param {import('discord').Message | undefined} [params.form.message] - The message object if it's a message command.
-     * @param {import('discord').ChatInputCommandInteraction | undefined} [params.form.interaction] - The interaction object if it's a slash command.
-     */
     async executeCommand(form: ExecuteCommandBridgeForm): Promise<Result<void, Error>> {
         const { commandName, data } = form;
         const serializedCommandName = this.serializeCommandName(commandName);
@@ -82,10 +46,6 @@ export default class CommandBridgeService implements ICommandBridgeService {
         return Results.Ok(undefined);
     }
 
-    /**
-     * Initializes and registers command handlers based on commands from the repository.
-     * @returns {Promise<void>}
-     */
     async initializeCommands(): Promise<void> {
         this.discordBotCommands = await this.discordCommandRepository.getCommands();
 
@@ -120,11 +80,6 @@ export default class CommandBridgeService implements ICommandBridgeService {
     }
 
 
-    /**
-    *
-    * @param {string} commandName
-    * @returns {string}
-    */
     private serializeCommandName(commandName: string): string {
         const isAShortcut = commandName.includes(this.shortcutIdentifier);
         if (isAShortcut) {

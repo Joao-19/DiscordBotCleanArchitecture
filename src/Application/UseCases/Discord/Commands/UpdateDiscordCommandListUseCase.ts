@@ -6,23 +6,10 @@ class UpdateDiscordCommandListUseCase implements IUpdateDiscordCommandListUseCas
 
     discordCommandRepository: IDiscordCommandRepository
 
-/**
- * Initializes a new instance of the UpdateDiscordCommandListUseCase class.
- * @param discordCommandRepository - The repository for managing Discord commands.
- */
-
     constructor(discordCommandRepository: IDiscordCommandRepository) {
         this.discordCommandRepository = discordCommandRepository;
     }
 
-
-    /**
-     * Executes the use case.
-     *
-     * @param {IUpdateDiscordCommandListUseCaseForm} form - The form containing the commands to update.
-     * @returns {Promise<Results.Result<Commands, BaseError>>}
-     */
-    
     async execute(form: IUpdateDiscordCommandListUseCaseForm) {
         const { commands } = form;
         return Results.Ok(await this.discordCommandRepository.updateCommands(commands));

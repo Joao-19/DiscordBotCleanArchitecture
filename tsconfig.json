@@ -12,7 +12,9 @@
     "outDir": "dist",
     "paths": {
       "*": ["node_modules/*"],
-    }
+    },
+    "noEmit": true,
+    "allowImportingTsExtensions": true
   },
   "display": "Recommended",
   "$schema": "https://json.schemastore.org/tsconfig"

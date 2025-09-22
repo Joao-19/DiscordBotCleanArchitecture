@@ -3,24 +3,11 @@ import ICommandBridgeService from "../../../Domain/Services/Discord/ICommandBrid
 import BaseDiscordController from "./BaseDiscordController.js";
 import { Client, Events } from "discord.js";
 
-/**
- * Controller for handling Discord message-based commands (e.g., using a prefix).
- * @extends BaseDiscordController
- */
 export default class DiscordMessageWatcherController implements BaseDiscordController {
-    /** @type {any} */
     commandBridgeService: ICommandBridgeService;
-    /** @type {import('discord.js').Client} */
     discordClient: Client;
-    /** @type {string} */
-    prefix;
+    prefix: string;
 
-    /**
-     * @param {object} params
-     * @param {import('discord.js').Client} params.discordClient - The Discord client instance.
-     * @param {any} params.commandBridgeService - The CommandBridgeService instance.
-     * @param {string} params.shortcutIdentifier - The shortcut identifier (prefix) for message commands.
-     */
     constructor(form: { discordClient: Client, commandBridgeService: any, shortcutIdentifier: string }) {
         const { discordClient, commandBridgeService, shortcutIdentifier } = form;
         this.discordClient = discordClient;

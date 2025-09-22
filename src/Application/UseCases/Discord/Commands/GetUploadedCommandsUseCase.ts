@@ -2,14 +2,7 @@ import { IGetUploadedCommandsUseCase } from "../../../../Domain/UseCases/Discord
 import IDiscordCommandRepository from "../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.js";
 import Results from "ts-results";
 
-/**
- *  @type {import("../../../../Application/Interfaces/Services/IGetUploadedCommandsUseCase.ts").default}
- */
 export default class GetUploadedCommandsUseCase implements IGetUploadedCommandsUseCase {
-
-    /** 
-     * @param {import("../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.ts").default} discordCommandRepository
-     *  */
 
     discordCommandRepository: IDiscordCommandRepository;
 

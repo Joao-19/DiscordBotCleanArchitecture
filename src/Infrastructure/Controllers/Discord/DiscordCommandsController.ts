@@ -3,32 +3,17 @@ import ICommandBridgeService from "../../../Domain/Services/Discord/ICommandBrid
 import BaseDiscordController from "./BaseDiscordController.js";
 import { Client, Events } from "discord.js";
 
-/**
- * Controller for handling Discord slash commands (interactions).
- * @extends BaseDiscordController
- */
 export default class DiscordCommandsController implements BaseDiscordController {
 
-    /** @type {any} */
     commandBridgeService: ICommandBridgeService;
     discordClient: Client;
 
-    /**
-     * @param {object} params
-     * @param {import('discord.js').Client} params.discordClient - The Discord client instance.
-     * @param {import('../../Services/Discord/CommandBridgeService.js').default} params.commandBridgeService - The CommandBridgeService instance.
-     */
     constructor(form: { discordClient: Client, commandBridgeService: ICommandBridgeService }) {
         const { discordClient, commandBridgeService } = form;
         this.discordClient = discordClient;
         this.commandBridgeService = commandBridgeService;
     }
 
-    /**
-     * Registers event listeners for Discord interactions.
-     * Listens for `InteractionCreate` events and dispatches slash commands to the CommandBridgeService.
-     * @returns {void}
-     */
     registerEvents(): Result<void, Error> {
 
         this.discordClient.on(Events.InteractionCreate, async interaction => {

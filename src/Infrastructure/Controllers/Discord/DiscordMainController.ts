@@ -1,18 +1,16 @@
 import { Events, Client, Message } from "discord.js";
-import BaseDiscordController from "./BaseDiscordController.js";
-import { DiscordCommand, Commands } from "../../../Domain/Discord/Entities/DiscordCommand.js";
-import IUpdateDiscordCommandListUseCase from "../../../Domain/UseCases/Discord/Commands/IUpdateDiscordCommandListUseCase.js";
-import IGetUploadedCommandsUseCase from "../../../Domain/UseCases/Discord/Commands/IGetUploadedCommandsUseCase.js";
-import GetDiscordCommandListUseCase from "../../../Application/UseCases/Discord/Commands/GetDiscordCommandListUseCase.js";
-import DiscordCommandsController from "./BaseDiscordController.js";
-import DiscordMessageWatcherController from "./BaseDiscordController.js";
+import BaseDiscordController from "./BaseDiscordController.ts";
+import { DiscordCommand, Commands } from "../../../Domain/Discord/Entities/DiscordCommand.ts";
+import {IUpdateDiscordCommandListUseCase} from "../../../Domain/UseCases/Discord/Commands/IUpdateDiscordCommandListUseCase.ts";
+import {IGetUploadedCommandsUseCase} from "../../../Domain/UseCases/Discord/Commands/IGetUploadedCommandsUseCase.ts";
+import GetDiscordCommandListUseCase from "../../../Application/UseCases/Discord/Commands/GetDiscordCommandListUseCase.ts";
+import DiscordCommandsController from "./BaseDiscordController.ts";
+import DiscordMessageWatcherController from "./BaseDiscordController.ts";
 import Results, { Result } from "ts-results";
-import ICommandBridgeService from "../../../Domain/Services/Discord/ICommandBridgeService.js";
+import ICommandBridgeService from "../../../Domain/Services/Discord/ICommandBridgeService.ts";
 
 export default class DiscordMainController implements BaseDiscordController {
-    /**
-     * @type {Commands}
-     */
+
     discordBotCommands: Commands;
 
     private readonly commandBridgeService: ICommandBridgeService;
@@ -23,17 +21,6 @@ export default class DiscordMainController implements BaseDiscordController {
     private readonly discordMessageWatcherController: DiscordMessageWatcherController;
     readonly discordClient: Client;
 
-
-    /**
-     * @param {object} params
-     * @param {import('discord').Client} params.discordClient - The Discord client instance.
-     * @param {import('../../Services/Discord/CommandBridgeService').default} params.commandBridgeService - The CommandBridgeService instance.
-     * @param {import('../../../Application/UseCases/Discord/Commands/GetDiscordCommandListUseCase').default} params.getDiscordCommandListUseCase - Use case to get Discord command list.
-     * @param {import("../../../Domain/UseCases/IUpdateDiscordCommandListUseCase").default} params.updateDiscordCommandListUseCase - Use case to update Discord command list.
-     * @param {import('./DiscordCommandsController').default} params.DiscordCommandsController - Controller for Discord slash commands.
-     * @param {import('./DiscordMessageWatcherController').default} params.discordMessageWatcherController - Controller for Discord message commands.
-     * @param {import('../../../Domain/UseCases/IGetUploadedCommandsUseCase').default} params.getUploadedCommandsUseCase - Use case to get uploaded commands.
-     */
     constructor({
         discordClient,
         commandBridgeService,
@@ -83,7 +70,7 @@ export default class DiscordMainController implements BaseDiscordController {
         try {
             const isCommandsUpdated = await this.#isCommandListUpdated();
             if (!isCommandsUpdated) {
-                await this.updateDiscordCommandListUseCase.execute(this.discordBotCommands.getAllCommands()); // Pass current commands for update
+                await this.updateDiscordCommandListUseCase.execute({commands:this.discordBotCommands.getAllCommands()}); // Pass current commands for update
             }
             console.log("Discord bot commands are updated!");
         } catch (e) {
@@ -93,7 +80,11 @@ export default class DiscordMainController implements BaseDiscordController {
 
     async #isCommandListUpdated() {
         const uploadedCommands = await this.getUploadedCommandsUseCase.execute();
-        const uploadedCommandNames = uploadedCommands.getAllCommandNames();
+        if (uploadedCommands.err) {
+            console.error("Failed to fetch uploaded commands:", uploadedCommands.val);
+            return false;
+        }
+        const uploadedCommandNames = uploadedCommands.val.getAllCommandNames();
 
         const registeredBotCommands = await this.getDiscordCommandListUseCase.execute();
         this.discordBotCommands = registeredBotCommands.val;

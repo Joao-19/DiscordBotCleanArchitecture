@@ -3,10 +3,6 @@ import config from "./env.config.js";
 import registerControllers from "./src/main.js";
 
 const app = express();
-// app.set('views', '..front/views');
-
-console.log(1234444, config);
-
 // Middleware global que loga todas as requisições
 app.use((req: Request, res: Response, next: NextFunction) => {
     console.log(`${req.method.toUpperCase()} - ${req.url}`);

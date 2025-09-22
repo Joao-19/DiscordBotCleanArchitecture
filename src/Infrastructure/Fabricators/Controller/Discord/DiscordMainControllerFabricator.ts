@@ -9,17 +9,7 @@ import CommandBridgeService from '../../../Services/Discord/CommandBridgeService
 import { Client } from "discord.js";
 import envConfig from "../../../../../env.config.js";
 
-/**
- * Fabricator for DiscordMainController.
- */
 class DiscordMainControllerFabricator {
-
-    /**
-     * Creates an instance of the DiscordMainController class and initializes all of its dependencies.
-     * @param {object} params - An object containing the required dependencies.
-     * @param {import('discord').Client} params.discordClient - The Discord client instance.
-     * @returns {any} An instance of the DiscordMainController class.
-     */
 
     static create({discordClient}: {discordClient: Client}) {
 
@@ -37,7 +27,6 @@ class DiscordMainControllerFabricator {
         const getDiscordCommandListUseCase = GetDiscordCommandListUseCaseFabricator.create(discordCommandRepositoryInstance);
         const getUploadedCommandsUseCase = GetUploadedCommandsUseCaseFabricator.create(discordCommandRepositoryInstance);
 
-        /** @type {import("../../../../Application/UseCases/Discord/Commands/UpdateDiscordCommandListUseCase").default} */
         const updateDiscordCommandListUseCase = UpdateDiscordCommandListUseCaseFabricator.create(discordCommandRepositoryInstance);
         const DiscordCommandsController = DiscordCommandsControllerFabricator.create({
             discordClient,

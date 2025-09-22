@@ -1,7 +1,7 @@
-import BaseError from "../../../../Domain/Error/BaseError.js";
-import ErrorMessage from "../../../../Domain/Error/Discord/Message/ErrorMessage.js";
-import { Commands, DiscordCommand } from "../../../../Domain/Discord/Entities/DiscordCommand.js";
-import UseCase from "../DiscordUseCase.js";
+import BaseError from "../../../../Domain/Error/BaseError.ts";
+import ErrorMessage from "../../../../Domain/Error/Discord/Message/ErrorMessage.ts";
+import { Commands, DiscordCommand } from "../../../../Domain/Discord/Entities/DiscordCommand.ts";
+import UseCase from "../DiscordUseCase.ts";
 
 export interface IUpdateDiscordCommandListUseCaseForm  {
     commands: DiscordCommand[];

@@ -1,17 +1,10 @@
-// import IUpdateDiscordCommandListUseCase from "../../../../Application/Interfaces/Services/IUpdateDiscordCommandListUseCase.ts";
+import UpdateDiscordCommandListUseCase from "../../../../Application/UseCases/Discord/Commands/UpdateDiscordCommandListUseCase.ts";
+import IDiscordCommandRepository from "../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
 
 class UpdateDiscordCommandListUseCaseFabricator {
-    static create(/** @type {import("../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.ts").default} */ discordCommandRepositoryInstance) {
-        return new /** @class */ (function () {
-           function UpdateDiscordCommandListUseCase(discordCommandRepositoryInstance) {
-               this.discordCommandRepository = discordCommandRepositoryInstance;
-           }
-           UpdateDiscordCommandListUseCase.prototype.execute = function (commands: DiscordCommand[]) {
-               return this.discordCommandRepository.updateCommands(commands);
-           };
-           return UpdateDiscordCommandListUseCase;
-       }());
-   }
+    static create(discordCommandRepository: IDiscordCommandRepository){
+        return new UpdateDiscordCommandListUseCase(discordCommandRepository);
+    }
 }
 
 export default UpdateDiscordCommandListUseCaseFabricator;

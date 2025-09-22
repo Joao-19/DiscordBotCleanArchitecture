@@ -3,30 +3,17 @@ import { IPingComandUseCaseErrors, IPingCommandUseCase, IPingCommandUseCaseResul
 import Results, { Result } from "ts-results";
 import BaseError, { ErrorTag } from "../../../../Domain/Error/BaseError.js";
 
-/**
- * @type {import("../../../Interfaces/Services/IPingCommandUseCase.ts").default}
- */
+
 export default class PingCommandUseCase implements IPingCommandUseCase {
 
 
     discordClient: Client
 
-    /**
-     * @param {object} params
-     * @param {import('discord.js').Client} params.discordClient
-     */
     constructor(form: { discordClient: Client }) {
         const { discordClient } = form;
         this.discordClient = discordClient;
     }
 
-    /**
-     * Executes the Ping command.
-     * @param {object} form - The form data for the command.
-     * @param {import('discord.js').Message | undefined} [form.message] - The message object if it's a message command.
-     * @param {import('discord.js').ChatInputCommandInteraction | undefined} [form.interaction] - The interaction object if it's a slash command.
-     * @returns {Promise<void>}
-     */
     async execute(form: PingComandUseCaseForm): Promise<Result<void, IPingComandUseCaseErrors>> {
         const { message, interaction } = form;
         const replyContent = "Pong! La ele...";
