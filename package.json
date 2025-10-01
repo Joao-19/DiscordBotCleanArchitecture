@@ -1,13 +1,14 @@
 {
-  "name": "mvc-exemplo-nodejs",
-  "version": "1.0.0",
+  "name": "Discord_Bot_Clean_Architecture",
+  "version": "1.1.0",
   "type": "module",
-  "description": "Bot para de discord para teste",
-  "main": "app.js",
+  "description": "Discord bot template with clean architecture and typescript",
+  "main": "dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "tsx watch app.ts"
   },
   "author": "João Vitor",
   "license": "ISC",
@@ -18,9 +19,13 @@
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.16.4",
-    "fs": "0.0.1-security"
+    "ts-results": "^3.3.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "@tsconfig/recommended": "^1.0.10",
+    "@types/express": "^5.0.3",
+    "nodemon": "^3.1.9",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
   }
 }

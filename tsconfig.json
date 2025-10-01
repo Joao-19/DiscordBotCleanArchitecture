@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es2023",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "outDir": "dist",
+    "paths": {
+      "*": ["node_modules/*"],
+    },
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "display": "Recommended",
+  "$schema": "https://json.schemastore.org/tsconfig"
+}
