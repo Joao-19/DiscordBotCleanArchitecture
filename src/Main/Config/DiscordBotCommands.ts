@@ -31,7 +31,7 @@ export default function CreateCommands(discordClient: Client): DiscordCommand[] 
                 }),
                 DiscordCommandOption.create({
                     name: 'tipo',
-                    description: 'A categoria do novo canal, é opcional.',
+                    description: 'O novo tipo do canal.',
                     type: CommandOptionType.INTEGER,
                     choices: [
                         { name: 'Texto', value: ChannelCommunicationType.TEXT },
