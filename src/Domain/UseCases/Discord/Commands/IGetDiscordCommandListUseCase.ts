@@ -1,7 +1,7 @@
-import BaseError from "../../../Error/BaseError.js";
-import ErrorMessage from "../../../Error/Discord/Message/ErrorMessage.js";
-import UseCase from "../DiscordUseCase.js";
-import { Commands } from "../../../Discord/Entities/DiscordCommand.js";
+import BaseError from "../../../Error/BaseError.ts";
+import ErrorMessage from "../../../Error/Discord/Message/ErrorMessage.ts";
+import UseCase from "../DiscordUseCase.ts";
+import { Commands } from "../../../Discord/Entities/DiscordCommand.ts";
 
 export type GetDiscordCommandListUseCaseForm = void;
 export type IGetDiscordCommandListUseCaseResult = Commands;

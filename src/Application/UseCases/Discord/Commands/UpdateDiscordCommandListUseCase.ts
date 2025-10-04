@@ -1,6 +1,7 @@
-import {IUpdateDiscordCommandListUseCase, IUpdateDiscordCommandListUseCaseForm} from "../../../../Domain/UseCases/Discord/Commands/IUpdateDiscordCommandListUseCase.js";
-import IDiscordCommandRepository from "../../../Interfaces/Repositories/IDiscordCommandRepository.js";
-import Results from "ts-results";
+import IDiscordCommandRepository from "@/Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
+import { IUpdateDiscordCommandListUseCase, IUpdateDiscordCommandListUseCaseForm } from "@/Domain/UseCases/Discord/Commands/IUpdateDiscordCommandListUseCase.ts";
+import { Ok } from "ts-results/result.js";
+
 
 class UpdateDiscordCommandListUseCase implements IUpdateDiscordCommandListUseCase {
 
@@ -12,7 +13,7 @@ class UpdateDiscordCommandListUseCase implements IUpdateDiscordCommandListUseCas
 
     async execute(form: IUpdateDiscordCommandListUseCaseForm) {
         const { commands } = form;
-        return Results.Ok(await this.discordCommandRepository.updateCommands(commands));
+        return Ok(await this.discordCommandRepository.updateCommands(commands));
     }
 }
 

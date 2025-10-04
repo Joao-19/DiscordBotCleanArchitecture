@@ -1,17 +1,26 @@
 {
   "compilerOptions": {
+    "strict": true,
     "target": "es2023",
     "module": "nodenext",
+    "useDefineForClassFields": false,
     "moduleResolution": "nodenext",
     "baseUrl": "./src",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
     "skipLibCheck": true,
     "allowJs": true,
     "outDir": "dist",
     "paths": {
-      "*": ["node_modules/*"],
+      "*": [
+        "node_modules/*"
+      ],
+      "@/*": [
+        "*"
+      ]
     },
     "noEmit": true,
     "allowImportingTsExtensions": true

@@ -1,6 +1,6 @@
-import Results from "ts-results";
-import { IGetDiscordCommandListUseCase } from "../../../../Domain/UseCases/Discord/Commands/IGetDiscordCommandListUseCase.js";
-import IDiscordCommandRepository from "../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.js";
+import IDiscordCommandRepository from "@/Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
+import { IGetDiscordCommandListUseCase } from "@/Domain/UseCases/Discord/Commands/IGetDiscordCommandListUseCase.ts";
+import { Ok } from "ts-results/result.js";
 
 class GetDiscordCommandListUseCase implements IGetDiscordCommandListUseCase {
 
@@ -12,7 +12,7 @@ class GetDiscordCommandListUseCase implements IGetDiscordCommandListUseCase {
 
     async execute() {
         const commands = await this.discordCommandRepository.getCommands();
-        return Results.Ok(commands);
+        return Ok(commands);
     }
 }
 

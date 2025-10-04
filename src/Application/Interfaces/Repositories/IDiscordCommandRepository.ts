@@ -1,10 +1,7 @@
-import { DiscordCommand } from "../../../Domain/Discord/Entities/DiscordCommand.js";
-import { Commands } from "../../../Domain/Discord/Entities/DiscordCommand.js";
-
+import { DiscordCommandSerialized, Commands, DiscordCommand } from "@/";
 
 interface IDiscordCommandRepository {
-
-    getUploadedCommands(): Promise<Commands>;
+    getUploadedCommands(): Promise<DiscordCommandSerialized[]>;
 
     getCommands(): Promise<Commands>;
 

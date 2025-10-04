@@ -1,7 +1,7 @@
-import DiscordMessageWatcherController from "../../../Controllers/Discord/DiscordMessageWatcherController.ts";
 import envConfig from "../../../../../env.config.js";
 import { Client } from "discord.js"
-import ICommandBridgeService from "../../../../Domain/Services/Discord/ICommandBridgeService.ts";
+import ICommandBridgeService from "../../../../Application/Services/Discord/ICommandBridgeService.ts";
+import DiscordMessageWatcherController from "../../../../Infrastructure/Controllers/Discord/DiscordMessageWatcherController.ts";
 
 class DiscordMessageWatcherControllerFabricator {
     static create(form:{discordClient: Client, commandBridgeService: ICommandBridgeService}) {

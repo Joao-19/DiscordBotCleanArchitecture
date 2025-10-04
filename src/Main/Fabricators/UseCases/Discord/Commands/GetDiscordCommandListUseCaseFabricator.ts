@@ -1,5 +1,5 @@
-import IDiscordCommandRepository from "../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.js";
-import GetDiscordCommandListUseCase from "../../../../Application/UseCases/Discord/Commands/GetDiscordCommandListUseCase.js";
+import IDiscordCommandRepository from "../../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
+import GetDiscordCommandListUseCase from "../../../../../Application/UseCases/Discord/Commands/GetDiscordCommandListUseCase.ts";
 
 class GetDiscordCommandListUseCaseFabricator {
     static create(discordCommandRepository: IDiscordCommandRepository) {

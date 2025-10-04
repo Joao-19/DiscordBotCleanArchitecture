@@ -1,6 +1,6 @@
-import Results, { Result } from "ts-results";
-import ICommandBridgeService from "../../../Domain/Services/Discord/ICommandBridgeService.js";
-import BaseDiscordController from "./BaseDiscordController.js";
+import { Ok, Result } from "ts-results";
+import ICommandBridgeService from "../../../Application/Services/Discord/ICommandBridgeService.ts";
+import BaseDiscordController from "./BaseDiscordController.ts";
 import { Client, Events } from "discord.js";
 
 export default class DiscordMessageWatcherController implements BaseDiscordController {
@@ -38,6 +38,6 @@ export default class DiscordMessageWatcherController implements BaseDiscordContr
 
         });
 
-        return Results.Ok(undefined);
+        return Ok(undefined);
     }
 }

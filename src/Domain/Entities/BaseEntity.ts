@@ -1,4 +1,4 @@
-import  { Id, SnowflakeId } from "./ObjectValues/Id.js";
+import  { Id, SnowflakeId } from "./ObjectValues/Id.ts";
 
 class BaseEntity<Identifier extends Id | SnowflakeId> {
     id: Identifier;

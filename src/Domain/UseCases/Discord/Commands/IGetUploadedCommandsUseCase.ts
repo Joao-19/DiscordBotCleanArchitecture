@@ -1,9 +1,9 @@
-import BaseError from "../../../../Domain/Error/BaseError.js";
-import ErrorMessage from "../../../../Domain/Error/Discord/Message/ErrorMessage.js";
-import { Commands } from "../../../Discord/Entities/DiscordCommand.js";
-import UseCase from "../DiscordUseCase.js";
+import BaseError from "../../../../Domain/Error/BaseError.ts";
+import ErrorMessage from "../../../../Domain/Error/Discord/Message/ErrorMessage.ts";
+import { DiscordCommandSerialized } from "../../../Discord/Entities/DiscordCommand.ts";
+import UseCase from "../DiscordUseCase.ts";
 
 export type IGetUploadedCommandsUseCaseForm  = void;
-export type IGetUploadedCommandsUseCaseResult = Commands;
+export type IGetUploadedCommandsUseCaseResult = DiscordCommandSerialized[];
 export type IGetUploadedCommandsUseCaseErrors = ErrorMessage | BaseError
-export type IGetUploadedCommandsUseCase =  UseCase<IGetUploadedCommandsUseCaseForm, IGetUploadedCommandsUseCaseResult, IGetUploadedCommandsUseCaseErrors>
+export type IGetUploadedCommandsUseCase =  UseCase<IGetUploadedCommandsUseCaseForm, IGetUploadedCommandsUseCaseResult>

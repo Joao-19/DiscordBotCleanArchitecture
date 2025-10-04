@@ -1,5 +1,5 @@
-import { Message, ChatInputCommandInteraction } from "discord.js";
-import BaseError, { ErrorTag } from "../../BaseError.ts";
+import { ChatInputCommandInteraction, Message } from "discord.js";
+import BaseError, { ErrorTag } from "./BaseError.ts";
 
 interface CommandNotFoundErrorForm {
     message?: string;
@@ -8,12 +8,12 @@ interface CommandNotFoundErrorForm {
     interaction?: Message | ChatInputCommandInteraction;
 }
 
-export default class CommandNotFoundError extends BaseError {
+export default class UnknownError extends BaseError {
     readonly interaction?: Message | ChatInputCommandInteraction;
     public message: string;
 
     constructor(form: CommandNotFoundErrorForm, cause?: Error) {
-        const defaultMessage = "Comando não encontrado. Verifique se você digitou o comando corretamente.";
+        const defaultMessage = "Erro desconhecido. Por favor, tente novamente mais tarde.";
         const finalForm = {
             ...form,
             message: form.message || defaultMessage,
