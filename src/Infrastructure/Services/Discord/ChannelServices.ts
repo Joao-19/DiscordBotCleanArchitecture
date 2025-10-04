@@ -11,7 +11,7 @@ export class ChannelService implements IChannelService {
         this.discordClient = discordClient;
     }
 
-    async create(guildId: string, channelName: string): Promise<Result<void, UnknownError>> {
+    async create(guildId: string, channelName: string,type: number, category?: string): Promise<Result<void, UnknownError>> {
         try {
             let guild = this.discordClient.guilds.cache.get(guildId);
             if (!guild) {
@@ -19,7 +19,8 @@ export class ChannelService implements IChannelService {
             }
             await guild.channels.create({
                 name: channelName,
-                type: ChannelType.GuildText,
+                type,
+                parent: category || undefined
             });
             return Ok(undefined);
         } catch (error) {

@@ -6,13 +6,13 @@ export default class CreateChannelUseCase implements ICreateChannelUseCase {
 
     constructor(
         readonly channelService: IChannelService
-    ) {}
+    ) { }
 
     async execute(form: CreateChannelUseCaseForm): Promise<Result<ICreateChannelUseCaseResult, ICreateChannelUseCaseErrors>> {
-        const { nome:name, guildId } = form;
-        const replySuccess = "Canal Criado com sucesso!";
-        const result = await this.channelService.create(guildId, name);
+        const { nome: name, guildId, tipo: type, categoria: category } = form;
+        const replyMessage = "Canal Criado com sucesso!";
+        const result = await this.channelService.create(guildId, name, type, category);
         if (result.err) return result;
-        return Ok({ replySuccess });
+        return Ok({ replyMessage });
     }
 }

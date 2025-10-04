@@ -108,12 +108,23 @@ class DiscordCommandRepository implements IDiscordCommandRepository {
 
         // Mapeia opções (parâmetros) do comando principal ou de um subcomando
         if (command.options && command.options.length > 0) {
-            data.options = command.options.map(opt => ({
-                name: opt.name,
-                description: opt.description,
-                type: commandOptionTypeMap[opt.type],
-                required: opt.required,
-            }));
+            data.options = command.options.map(opt => {
+                const optionData: any = {
+                    name: opt.name,
+                    description: opt.description,
+                    type: commandOptionTypeMap[opt.type],
+                    required: opt.required,
+                };
+
+                if (opt.choices && opt.choices.length > 0) {
+                    optionData.choices = opt.choices.map(choice => ({
+                        name: choice.name,
+                        value: choice.value
+                    }));
+                }
+
+                return optionData;
+            });
         }
 
         // Mapeia subcomandos e grupos de subcomandos (lógica recursiva)

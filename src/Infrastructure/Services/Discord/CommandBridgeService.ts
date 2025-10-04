@@ -1,7 +1,7 @@
 import { Ok, Err, Result } from "ts-results/result.js";
 import IDiscordCommandRepository from "@/Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
 import ICommandBridgeService, { ExecuteCommandBridgeForm } from "@/Application/Services/Discord/ICommandBridgeService.ts";
-import { DiscordCommand } from "@/Domain/Discord/Entities/DiscordCommand.ts";
+import { CommandOptionType, DiscordCommand } from "@/Domain/Discord/Entities/DiscordCommand.ts";
 import { ErrorTag } from "@/Domain/Error/BaseError.ts";
 import CommandNotFoundError from "@/Domain/Error/Discord/Message/CommandNotFoundError.ts";
 import { Client, ChatInputCommandInteraction, Message, MessageFlags } from "discord.js";
@@ -38,10 +38,10 @@ export default class CommandBridgeService implements ICommandBridgeService {
             if (data.interaction && commandHandler.options.length > 0) {
                 optionsForm = this.extractOptionsDataFromInteraction(commandHandler, data.interaction);
             }
-            const commandResult = await commandHandler.handler.execute({...optionsForm, ...data});
+            const commandResult = await commandHandler.handler.execute({ ...optionsForm, ...data });
             if (commandResult.err) return commandResult;
-            if ("replySuccess" in commandResult.val) {
-               successResult = commandResult.val.replySuccess;
+            if ("replyMessage" in commandResult.val) {
+                successResult = commandResult.val.replyMessage;
             }
         } else if (commandHandler && commandHandler.subCommands.length > 0) {
             const subCommandName = data.interaction?.options.getSubcommand(false) || data.message?.content.split(" ")[1];
@@ -64,10 +64,14 @@ export default class CommandBridgeService implements ICommandBridgeService {
                 await commandNotFoundError.reply();
                 return Err(commandNotFoundError);
             }
-            const subCommandResult = await subCommandHandler.handler.execute(data);
+            let optionsForm: Object | undefined = undefined;
+            if (data.interaction && subCommandHandler.options.length > 0) {
+                optionsForm = this.extractOptionsDataFromInteraction(subCommandHandler, data.interaction);
+            }
+            const subCommandResult = await subCommandHandler.handler.execute({ ...optionsForm, ...data });
             if (subCommandResult.err) return subCommandResult;
-            if ("replySuccess" in subCommandResult.val) {
-               successResult = subCommandResult.val.replySuccess;
+            if ("replyMessage" in subCommandResult.val) {
+                successResult = subCommandResult.val.replyMessage;
             }
         } else {
             const commandNotFoundError = new CommandNotFoundError({
@@ -115,24 +119,54 @@ export default class CommandBridgeService implements ICommandBridgeService {
     }
 
     // Todo implement with message in the future
-    private extractOptionsDataFromInteraction(command: DiscordCommand, interaction: ChatInputCommandInteraction): Object {
-        const findOptions = command.options;
-        let extractedOptions = {
-            guildId: interaction.guildId, // default parameter for use cases can manage guild related data
+    private extractOptionsDataFromInteraction(command: DiscordCommand, interaction: ChatInputCommandInteraction): object {
+        const extractedOptions: { [key: string]: any } = {
+            // Parâmetros padrão que todo UseCase pode precisar
+            guildId: interaction.guildId
         };
-        const extractedOptionNames = findOptions.map(option => option.name);
-        extractedOptionNames.forEach(name => {
-            // Todo in the future, handle different option types (not only string), others not tested.
-            const value = interaction.options.getString(name);
-            if (value) {
-                extractedOptions = {
-                    ...extractedOptions,
-                    [name]: value
+
+        // Itera sobre as opções que você DEFINIU para este comando
+        for (const definedOption of command.options) {
+            const optionName = definedOption.name;
+
+            // Use um switch no TIPO que você mesmo definiu na sua entidade de domínio
+            switch (definedOption.type) {
+                case CommandOptionType.CHANNEL: {
+                    // ✅ Pega o canal diretamente com o tipo correto!
+                    const channelValue = interaction.options.getChannel(optionName);
+                    if (channelValue) {
+                        extractedOptions[optionName] = channelValue;
+                    }
+                    break;
+                }
+
+                case CommandOptionType.STRING: {
+                    const stringValue = interaction.options.getString(optionName);
+                    if (stringValue) {
+                        extractedOptions[optionName] = stringValue;
+                    }
+                    break;
+                }
+
+                case CommandOptionType.USER: {
+                    const userValue = interaction.options.getUser(optionName);
+                    if (userValue) {
+                        extractedOptions[optionName] = userValue;
+                    }
+                    break;
+                }
+
+                // ... adicione outros casos para INTEGER, ROLE, BOOLEAN, etc.
+
+                default: {
+                    const genericOption = interaction.options.get(optionName);
+                    if (genericOption?.value) {
+                        extractedOptions[optionName] = genericOption.value;
+                    }
+                    break;
                 }
             }
-        });
-        console.log("Extracted Options:",extractedOptions);
-        
+        }
         return extractedOptions;
     }
 

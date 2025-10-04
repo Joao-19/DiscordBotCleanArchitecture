@@ -28,18 +28,6 @@ export default async function registerControllers() {
     // app.use("/other", otherRouter);
 
     discordClient.once(Events.ClientReady, async (readyClient) => {
-        ///
-        const testGuild = await discordClient.guilds.fetch("1103735317300793416");
-        console.log('[TESTE DE SANIDADE] Guild encontrada:', testGuild.name);
-        console.log('[TESTE DE SANIDADE] Gerenciador de canais:', testGuild.channels);
-
-        if (testGuild.channels) {
-            console.log(testGuild.channels)
-            console.log('[TESTE DE SANIDADE] ✅ SUCESSO! O gerenciador de canais EXISTE. O problema está em como o `discordClient` é passado para o seu serviço.');
-        } else {
-            console.log('[TESTE DE SANIDADE] ❌ FALHA! O gerenciador é UNDEFINED. O problema é 100% com as Intents ou permissões do bot.');
-        }
-        ///
         console.log(`Discord Bot logged in as ${readyClient.user.tag}!!!`);
         const discordMainController = DiscordMainControllerFabricator.create({ discordClient });
         discordMainController.registerEvents();

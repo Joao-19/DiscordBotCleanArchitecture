@@ -17,22 +17,31 @@ export enum CommandOptionType {
     // ... outros tipos
 }
 
+export interface GenericOptions {
+    name: string;
+    // name_localizations?: { [key: string]: string };
+    value: string | number;
+};
+
+export type GenericCommandOptionsType = GenericOptions | CommandOptionType;
 export class DiscordCommandOption {
     name: string;
     description: string;
     type: CommandOptionType;
+    choices?: GenericOptions[];
     required: boolean;
 
-    constructor(name: string, description: string, type: CommandOptionType, required: boolean) {
+    constructor(name: string, description: string, type: CommandOptionType, required: boolean, choices: GenericOptions[] = []) {
         this.name = name;
         this.description = description;
         this.type = type;
         this.required = required;
+        this.choices = choices;
     }
 
-    static create(form: { name: string, description: string, type: CommandOptionType, required: boolean }): DiscordCommandOption {
-        const { name, description, type, required } = form;
-        return new DiscordCommandOption(name, description, type, required);
+    static create(form: { name: string, description: string, type: CommandOptionType, required: boolean, choices?: GenericOptions[] }): DiscordCommandOption {
+        const { name, description, type, required, choices } = form;
+        return new DiscordCommandOption(name, description, type, required, choices);
     }
 }
 
