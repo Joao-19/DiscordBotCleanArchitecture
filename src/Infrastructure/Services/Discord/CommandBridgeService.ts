@@ -1,82 +1,96 @@
-import PingCommandUseCaseFabricator from "../../Fabricators/UseCases/Discord/PingCommandUseCaseFabricator.js";
-import { Commands, DiscordCommand } from "../../../Domain/Discord/Entities/DiscordCommand.js";
-import IDiscordCommandRepository from "../../../Application/Interfaces/Repositories/IDiscordCommandRepository.js";
-import Results, { Result } from "ts-results";
-import { Client, ChatInputCommandInteraction, Message } from "discord.js";
-import { ErrorTag } from "../../../Domain/Error/BaseError.js";
-import ICommandBridgeService, {CommandHandler, ExecuteCommandBridgeForm} from "../../../Domain/Services/Discord/ICommandBridgeService.js";
-import CommandNotFoundError from "../../../Domain/Error/Discord/Message/CommandNotFoundError.js";
+import { Ok, Err, Result } from "ts-results/result.js";
+import IDiscordCommandRepository from "@/Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
+import ICommandBridgeService, { ExecuteCommandBridgeForm } from "@/Application/Services/Discord/ICommandBridgeService.ts";
+import { DiscordCommand } from "@/Domain/Discord/Entities/DiscordCommand.ts";
+import { ErrorTag } from "@/Domain/Error/BaseError.ts";
+import CommandNotFoundError from "@/Domain/Error/Discord/Message/CommandNotFoundError.ts";
+import { Client, ChatInputCommandInteraction, Message, MessageFlags } from "discord.js";
 
 export default class CommandBridgeService implements ICommandBridgeService {
-
 
     discordClient: Client;
     discordCommandRepository: IDiscordCommandRepository;
     shortcutIdentifier;
-    discordBotHandlersCommands: CommandHandler[] = [];
-    discordBotCommands = new Commands({ commands: [] });
+    discordCommands: DiscordCommand[];
 
     constructor(form: {
         discordClient: Client,
         discordCommandRepository: IDiscordCommandRepository,
         shortcutIdentifier: string,
+        discordCommands: DiscordCommand[]
     }) {
-        const { discordClient, discordCommandRepository, shortcutIdentifier } = form;
+        const { discordClient, discordCommandRepository, shortcutIdentifier, discordCommands } = form;
         this.discordClient = discordClient;
         this.discordCommandRepository = discordCommandRepository;
         this.shortcutIdentifier = shortcutIdentifier;
+        this.discordCommands = discordCommands;
     }
 
     async executeCommand(form: ExecuteCommandBridgeForm): Promise<Result<void, Error>> {
         const { commandName, data } = form;
+
         const serializedCommandName = this.serializeCommandName(commandName);
-        const commandHandler = this.discordBotHandlersCommands.find(handler => handler.commandName === serializedCommandName);
-        if (commandHandler) {
-            const commandResult = await commandHandler.useCase.execute(data);
+        const commandHandler = this.discordCommands.find(command => command.name === serializedCommandName);
+        let successResult: string = "Comando executado com sucesso!";
+
+        if (commandHandler && commandHandler.handler) {
+            let optionsForm: Object | undefined = undefined;
+            if (data.interaction && commandHandler.options.length > 0) {
+                optionsForm = this.extractOptionsDataFromInteraction(commandHandler, data.interaction);
+            }
+            const commandResult = await commandHandler.handler.execute({...optionsForm, ...data});
             if (commandResult.err) return commandResult;
+            if ("replySuccess" in commandResult.val) {
+               successResult = commandResult.val.replySuccess;
+            }
+        } else if (commandHandler && commandHandler.subCommands.length > 0) {
+            const subCommandName = data.interaction?.options.getSubcommand(false) || data.message?.content.split(" ")[1];
+            if (!subCommandName) {
+                const commandNotFoundError = new CommandNotFoundError({
+                    interaction: data.message || data.interaction,
+                    message: `Subcommand not specified for command '${commandName}'.`,
+                    tag: ErrorTag.DISCORD_COMMAND
+                });
+                await commandNotFoundError.reply();
+                return Err(commandNotFoundError);
+            }
+            const subCommandHandler = commandHandler.subCommands.find(subCommand => subCommand.name === subCommandName);
+            if (!subCommandHandler || !subCommandHandler.handler) {
+                const commandNotFoundError = new CommandNotFoundError({
+                    interaction: data.message || data.interaction,
+                    message: `Subcommand '${subCommandName}' not found for command '${commandName}'.`,
+                    tag: ErrorTag.DISCORD_COMMAND
+                });
+                await commandNotFoundError.reply();
+                return Err(commandNotFoundError);
+            }
+            const subCommandResult = await subCommandHandler.handler.execute(data);
+            if (subCommandResult.err) return subCommandResult;
+            if ("replySuccess" in subCommandResult.val) {
+               successResult = subCommandResult.val.replySuccess;
+            }
         } else {
             const commandNotFoundError = new CommandNotFoundError({
-                    interaction: data.message || data.interaction,
-                    message: `Command '${commandName}' not found.`,
-                    tag: ErrorTag.DISCORD_COMMAND
+                interaction: data.message || data.interaction,
+                message: `Command '${commandName}' not found.`,
+                tag: ErrorTag.DISCORD_COMMAND
             });
             await commandNotFoundError.reply();
-            return Results.Err(commandNotFoundError);
+            return Err(commandNotFoundError);
         }
-        return Results.Ok(undefined);
+        const someInteraction = data.interaction || data.message;
+        if (someInteraction) await this.replyCommand(successResult, someInteraction);
+        return Ok(undefined);
     }
 
     async initializeCommands(): Promise<void> {
-        this.discordBotCommands = await this.discordCommandRepository.getCommands();
-
-        const allAvailableHandlers: CommandHandler[] = [
-            {
-                commandName: "ping",
-                useCase: PingCommandUseCaseFabricator.create({ discordClient: this.discordClient })
-            },
-        ];
-
-
-        const unnavailableCommands: string[] = [];
-
-        this.discordBotHandlersCommands = (
-            this.discordBotCommands.getAllCommands().map((authorizedCommand: DiscordCommand) => {
-                const matchingHandler = allAvailableHandlers.find(handler => handler.commandName === authorizedCommand.getName());
-                if (!matchingHandler) {
-                    unnavailableCommands.push(authorizedCommand.getName());
-                    return false; // Or throw an error, depending on desired strictness
-                }
-                return matchingHandler;
-            }).filter((commandHandler: CommandHandler | false): commandHandler is CommandHandler => !!commandHandler)
-        );
-
-        console.log('CommandBridgeService initialized with handlers:', this.discordBotHandlersCommands.map(h => h.commandName).join('\n'));
-        console.warn('Unnavailable commands:\n', unnavailableCommands.join('\n'));
+        this.discordCommands = this.discordCommands;
+        await this.discordCommandRepository.updateCommands(this.discordCommands);
     }
 
     isCommandHandlerAvailable(discordCommand: DiscordCommand): boolean {
         const commandName = discordCommand.getName();
-        return this.discordBotHandlersCommands.some(handler => handler.commandName === commandName);
+        return this.discordCommands.some(discordCommand => discordCommand.name === commandName);
     }
 
 
@@ -86,6 +100,40 @@ export default class CommandBridgeService implements ICommandBridgeService {
             return commandName.replace(this.shortcutIdentifier, "");
         }
         return commandName;
+    }
+
+    private async replyCommand(message: string, interaction: ChatInputCommandInteraction | Message): Promise<void> {
+        if (interaction instanceof ChatInputCommandInteraction) {
+            if (interaction.replied || interaction.deferred) {
+                await interaction.followUp({ content: message, flags: MessageFlags.Ephemeral });
+            } else {
+                await interaction.reply({ content: message, flags: MessageFlags.Ephemeral });
+            }
+        } else if (interaction instanceof Message) {
+            await interaction.reply({ content: message });
+        }
+    }
+
+    // Todo implement with message in the future
+    private extractOptionsDataFromInteraction(command: DiscordCommand, interaction: ChatInputCommandInteraction): Object {
+        const findOptions = command.options;
+        let extractedOptions = {
+            guildId: interaction.guildId, // default parameter for use cases can manage guild related data
+        };
+        const extractedOptionNames = findOptions.map(option => option.name);
+        extractedOptionNames.forEach(name => {
+            // Todo in the future, handle different option types (not only string), others not tested.
+            const value = interaction.options.getString(name);
+            if (value) {
+                extractedOptions = {
+                    ...extractedOptions,
+                    [name]: value
+                }
+            }
+        });
+        console.log("Extracted Options:",extractedOptions);
+        
+        return extractedOptions;
     }
 
 }

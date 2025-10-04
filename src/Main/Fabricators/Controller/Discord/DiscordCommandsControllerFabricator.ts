@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
-import DiscordCommandsController from "../../../Controllers/Discord/DiscordCommandsController.js";
-import ICommandBridgeService from "../../../../Domain/Services/Discord/ICommandBridgeService.js";
+import ICommandBridgeService from "../../../../Application/Services/Discord/ICommandBridgeService.ts";
+import DiscordCommandsController from "../../../../Infrastructure/Controllers/Discord/DiscordCommandsController.ts";
 
 class DiscordCommandsControllerFabricator {
 

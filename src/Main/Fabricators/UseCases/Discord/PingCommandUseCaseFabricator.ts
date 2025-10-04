@@ -1,4 +1,4 @@
-import PingCommandUseCase from "../../../../Application/UseCases/Discord/Commands/PingCommandUseCase.js";
+import PingCommandUseCase from "../../../../Application/UseCases/Discord/Commands/PingCommandUseCase.ts";
 import { Client } from "discord.js";
 
 class PingCommandUseCaseFabricator {

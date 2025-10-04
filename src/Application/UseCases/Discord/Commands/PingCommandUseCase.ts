@@ -1,11 +1,9 @@
-import { Client } from "discord.js"
-import { IPingComandUseCaseErrors, IPingCommandUseCase, IPingCommandUseCaseResult, PingComandUseCaseForm } from "../../../../Domain/UseCases/Discord/Commands/IPingCommandUseCase.js";
-import Results, { Result } from "ts-results";
-import BaseError, { ErrorTag } from "../../../../Domain/Error/BaseError.js";
-
+import BaseError, { ErrorTag } from "@/Domain/Error/BaseError.ts";
+import { IPingCommandUseCase, PingComandUseCaseForm, IPingComandUseCaseErrors } from "@/Domain/UseCases/Discord/Commands/IPingCommandUseCase.ts";
+import { Client } from "discord.js";
+import { Result, Ok, Err } from "ts-results/result.js";
 
 export default class PingCommandUseCase implements IPingCommandUseCase {
-
 
     discordClient: Client
 
@@ -23,18 +21,18 @@ export default class PingCommandUseCase implements IPingCommandUseCase {
                 // The CommandBridgeService already routed to this use case,
                 // so we don't need to check message.content again.
                 await message.reply(replyContent);
-                return Results.Ok(undefined);
+                return Ok(undefined);
             }
     
             if (interaction) {
                 // interaction.reply() will throw on failure. We catch it below.
                 await interaction.reply(replyContent);
-                return Results.Ok(undefined);
+                return Ok(undefined);
             }
         } catch (error) {
             console.error("Failed to reply to ping command:", error);
             const errorMessage = error instanceof Error ? error.message : String(error);
-            return Results.Err(new BaseError({
+            return Err(new BaseError({
                 message: `Failed to send reply for ping command: ${errorMessage}`,
                 tag: ErrorTag.DISCORD_COMMAND
             }));
@@ -42,6 +40,6 @@ export default class PingCommandUseCase implements IPingCommandUseCase {
 
         // Fallback if neither message nor interaction is provided
         console.warn("PingCommandUseCase executed without message or interaction.");
-        return Results.Err(new BaseError({ message: "No message or interaction provided.", tag: ErrorTag.DISCORD_COMMAND }));
+        return Err(new BaseError({ message: "No message or interaction provided.", tag: ErrorTag.DISCORD_COMMAND }));
     }
 }

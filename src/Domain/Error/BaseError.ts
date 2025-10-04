@@ -7,6 +7,7 @@ export enum ErrorTag {
     VALIDATION = "VALIDATION",
     UNNEXPECTED = "UNNEXPECTED",
     GENERIC = "GENERIC",
+    DISCORD_CHANNEL = "DISCORD_CHANNEL"
 }
 
 export default class BaseError extends Error {

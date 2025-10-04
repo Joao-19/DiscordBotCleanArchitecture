@@ -1,4 +1,4 @@
-import ErrorMessage from "./ErrorMessage.js";
+import ErrorMessage from "./ErrorMessage.ts";
 
 export default class UnrecognizedMessageError extends ErrorMessage {
 

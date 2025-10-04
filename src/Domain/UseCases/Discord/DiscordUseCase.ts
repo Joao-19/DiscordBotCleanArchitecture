@@ -1,5 +1,5 @@
 import { Result } from "ts-results";
-import BaseError from "./../../Error/BaseError.js";
+import BaseError from "./../../Error/BaseError.ts";
 
 type UseCase<Form = unknown, Res = unknown, Errors extends Error = Error | BaseError, Context = undefined> =
   Context extends undefined

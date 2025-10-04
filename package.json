@@ -1,14 +1,13 @@
 {
   "name": "Discord_Bot_Clean_Architecture",
   "version": "1.1.0",
-  "type": "module",
   "description": "Discord bot template with clean architecture and typescript",
-  "main": "dist/app.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "node dist/app.js",
-    "dev": "tsx watch app.ts"
+    "dev": "ts-node-dev -r tsconfig-paths/register app.ts"
   },
   "author": "João Vitor",
   "license": "ISC",
@@ -18,7 +17,8 @@
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
-    "express": "^4.16.4",
+    "express": "^4.17.2",
+    "tslib": "^2.8.1",
     "ts-results": "^3.3.0"
   },
   "devDependencies": {
@@ -26,6 +26,8 @@
     "@types/express": "^5.0.3",
     "nodemon": "^3.1.9",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "ts-node": "10.7.0",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.1.2"
   }
 }

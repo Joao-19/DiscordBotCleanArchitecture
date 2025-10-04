@@ -1,5 +1,5 @@
 import { Message, ChatInputCommandInteraction } from "discord.js";
-import BaseError, { ErrorTag } from "../../BaseError.js";
+import BaseError, { ErrorTag } from "../../BaseError.ts";
 
 export default class ErrorMessage extends BaseError {
 

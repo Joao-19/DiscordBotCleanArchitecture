@@ -1,6 +1,7 @@
-import { IGetUploadedCommandsUseCase } from "../../../../Domain/UseCases/Discord/Commands/IGetUploadedCommandsUseCase.js";
-import IDiscordCommandRepository from "../../../../Application/Interfaces/Repositories/IDiscordCommandRepository.js";
-import Results from "ts-results";
+import IDiscordCommandRepository from "@/Application/Interfaces/Repositories/IDiscordCommandRepository.ts";
+import { IGetUploadedCommandsUseCase } from "@/Domain/UseCases/Discord/Commands/IGetUploadedCommandsUseCase.ts";
+import { Ok } from "ts-results/result.js";
+
 
 export default class GetUploadedCommandsUseCase implements IGetUploadedCommandsUseCase {
 
@@ -11,7 +12,7 @@ export default class GetUploadedCommandsUseCase implements IGetUploadedCommandsU
     }
 
     async execute() {
-        return Results.Ok(await this.discordCommandRepository.getUploadedCommands());
+        return Ok(await this.discordCommandRepository.getUploadedCommands());
     }
 
 }

@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import config from "./env.config.js";
-import registerControllers from "./src/main.js";
+import registerControllers from "./src/main.ts";
 
 const app = express();
 // Middleware global que loga todas as requisições

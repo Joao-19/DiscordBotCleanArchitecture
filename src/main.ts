@@ -1,7 +1,7 @@
-import app from "../app.js";
-import DiscordMainControllerFabricator from "./Infrastructure/Fabricators/Controller/Discord/DiscordMainControllerFabricator.js";
+import app from "../app.ts";
+import DiscordMainControllerFabricator from "./Main/Fabricators/Controller/Discord/DiscordMainControllerFabricator.ts";
 import envConfig from "../env.config.js";
-import { Client, IntentsBitField } from "discord.js";
+import { Client, Events, IntentsBitField } from "discord.js";
 
 interface RouteLayer {
     route?: {
@@ -12,10 +12,6 @@ interface RouteLayer {
     handle?: { stack?: RouteLayer[] };
 }
 
-// Manually create the Discord client instance
-/**
- * @type {import('discord.js').Client}')}
- */
 const discordClient = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
@@ -31,9 +27,23 @@ export default async function registerControllers() {
     // const newsRouter = OtherController();
     // app.use("/other", otherRouter);
 
+    discordClient.once(Events.ClientReady, async (readyClient) => {
+        ///
+        const testGuild = await discordClient.guilds.fetch("1103735317300793416");
+        console.log('[TESTE DE SANIDADE] Guild encontrada:', testGuild.name);
+        console.log('[TESTE DE SANIDADE] Gerenciador de canais:', testGuild.channels);
 
-    const discordMainController = DiscordMainControllerFabricator.create({ discordClient });
-
+        if (testGuild.channels) {
+            console.log(testGuild.channels)
+            console.log('[TESTE DE SANIDADE] ✅ SUCESSO! O gerenciador de canais EXISTE. O problema está em como o `discordClient` é passado para o seu serviço.');
+        } else {
+            console.log('[TESTE DE SANIDADE] ❌ FALHA! O gerenciador é UNDEFINED. O problema é 100% com as Intents ou permissões do bot.');
+        }
+        ///
+        console.log(`Discord Bot logged in as ${readyClient.user.tag}!!!`);
+        const discordMainController = DiscordMainControllerFabricator.create({ discordClient });
+        discordMainController.registerEvents();
+    });
     // Login the Discord client here, after all dependencies are resolved
     try {
         await discordClient.login(envConfig.discord.discordSecretToken);
@@ -41,8 +51,6 @@ export default async function registerControllers() {
     } catch (e) {
         console.error("Error logging in Discord client:", e);
     }
-
-    discordMainController.registerEvents();
 
     const stack = app._router.stack;
 
@@ -60,5 +68,4 @@ export default async function registerControllers() {
             });
         }
     });
-
 }
