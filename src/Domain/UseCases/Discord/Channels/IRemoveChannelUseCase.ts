@@ -1,0 +1,13 @@
+import ErrorMessage from "../../../Error/Discord/Message/ErrorMessage.ts";
+import UseCase from "../DiscordUseCase.ts";
+import UnknownError from "../../../Error/UnknownError.ts";
+import UseCaseReplyResult from "@/Domain/Discord/UseCaseReplyResult.ts";
+
+export interface RemoveChannelUseCaseForm {
+    guildId: string;
+    canal: string;
+}
+
+export type IRemoveChannelUseCaseResult = UseCaseReplyResult;
+export type IRemoveChannelUseCaseErrors = ErrorMessage | UnknownError;
+export type IRemoveChannelUseCase = UseCase<RemoveChannelUseCaseForm, IRemoveChannelUseCaseResult>

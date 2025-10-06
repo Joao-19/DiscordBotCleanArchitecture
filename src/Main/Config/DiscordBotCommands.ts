@@ -2,6 +2,8 @@ import { Client } from "discord.js";
 import { CommandOptionType, CommandType, DiscordCommand, DiscordCommandOption } from "../../Domain/Discord/Entities/DiscordCommand.ts";
 import PingCommandUseCaseFabricator from "../Fabricators/UseCases/Discord/PingCommandUseCaseFabricator.ts";
 import CreateChannelUseCaseFabricator from "../Fabricators/UseCases/Discord/Channels/CreateChannelUseCaseFabricator.ts";
+import EditChannelUseCaseFabricator from "../Fabricators/UseCases/Discord/Channels/EditChannelUseCaseFabricator.ts";
+import RemoveChannelUseCaseFabricator from "../Fabricators/UseCases/Discord/Channels/RemoveChannelUseCaseFabricator.ts";
 
 enum ChannelCommunicationType {
     TEXT = 0,
@@ -49,7 +51,43 @@ export default function CreateCommands(discordClient: Client): DiscordCommand[] 
             ],
             subCommands: [],
             handler: CreateChannelUseCaseFabricator({ discordClient })
-        })
+        }),
+        DiscordCommand.create({
+            name: "editar-chat",
+            description: "Edita um canal de texto existente no servidor.",
+            type: CommandType.CHAT_INPUT,
+            options: [
+                DiscordCommandOption.create({
+                    name: 'canal',
+                    description: 'O canal que será editado.',
+                    type: CommandOptionType.CHANNEL,
+                    required: true
+                }),
+                DiscordCommandOption.create({
+                    name: 'novo_nome',
+                    description: 'O novo nome para o canal.',
+                    type: CommandOptionType.STRING,
+                    required: false
+                })
+            ],
+            subCommands: [],
+            handler: EditChannelUseCaseFabricator({ discordClient })
+        }),
+        DiscordCommand.create({
+            name: "remove-chat",
+            description: "Edita um canal de texto existente no servidor.",
+            type: CommandType.CHAT_INPUT,
+            options: [
+                DiscordCommandOption.create({
+                    name: 'canal',
+                    description: 'O canal que será editado.',
+                    type: CommandOptionType.CHANNEL,
+                    required: true
+                })
+            ],
+            subCommands: [],
+            handler: RemoveChannelUseCaseFabricator({ discordClient })
+        }),
     ];
     return allCommands;
 }

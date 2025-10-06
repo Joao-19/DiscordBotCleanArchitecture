@@ -125,17 +125,16 @@ export default class CommandBridgeService implements ICommandBridgeService {
             guildId: interaction.guildId
         };
 
-        // Itera sobre as opções que você DEFINIU para este comando
         for (const definedOption of command.options) {
             const optionName = definedOption.name;
 
-            // Use um switch no TIPO que você mesmo definiu na sua entidade de domínio
+            
             switch (definedOption.type) {
                 case CommandOptionType.CHANNEL: {
-                    // ✅ Pega o canal diretamente com o tipo correto!
+                    // Pega o canal diretamente com o tipo correto!
                     const channelValue = interaction.options.getChannel(optionName);
                     if (channelValue) {
-                        extractedOptions[optionName] = channelValue;
+                        extractedOptions[optionName] = channelValue.id;
                     }
                     break;
                 }

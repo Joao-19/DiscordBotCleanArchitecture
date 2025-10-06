@@ -3,4 +3,6 @@ import { Result } from "ts-results";
 
 export default interface IChannelService {
     create(guildId: string, channelName: string, type: number, parentId?: string): Promise<Result<void, UnknownError>>;
+    edit(guildId: string, channelId: string, newName: string): Promise<Result<void, UnknownError>>;
+    remove(guildId: string, channelId: string): Promise<Result<void, UnknownError>>;
 }
